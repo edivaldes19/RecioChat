@@ -48,7 +48,6 @@ class User {
         "is_available": isAvailable,
         "notification_token": notificationToken
       };
-
   static List<User> fromJsonList(List<dynamic> jsonList) {
     List<User> toList = [];
     for (var item in jsonList) {

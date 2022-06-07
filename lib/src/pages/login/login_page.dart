@@ -51,8 +51,8 @@ class LoginPage extends StatelessWidget {
   Widget _imageBanner(BuildContext ctx) {
     return Container(
         margin: EdgeInsets.only(
-            top: 130, bottom: MediaQuery.of(ctx).size.height * 0.22),
-        child: Image.asset('assets/img/chat.png', width: 200, height: 200));
+            top: 130, bottom: MediaQuery.of(ctx).size.height * 0.15),
+        child: Image.asset('assets/img/icon_app.png', width: 200, height: 200));
   }
 
   Widget _textDontHaveAccount() {
@@ -105,9 +105,6 @@ class LoginPage extends StatelessWidget {
   Widget _textLogin() {
     return const Text('Bienvenido(a)',
         style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-            fontFamily: 'NimbusSans'));
+            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22));
   }
 }

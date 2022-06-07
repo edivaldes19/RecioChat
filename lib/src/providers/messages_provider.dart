@@ -1,130 +1,98 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:chat_udemy/src/api/environment.dart';
-import 'package:chat_udemy/src/models/message.dart';
-import 'package:chat_udemy/src/models/response_api.dart';
-import 'package:chat_udemy/src/models/user.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
-
-
+import 'package:recio_chat/src/api/environment.dart';
+import 'package:recio_chat/src/models/message.dart';
+import 'package:recio_chat/src/models/response_api.dart';
+import 'package:recio_chat/src/models/user.dart';
 
 class MessagesProvider extends GetConnect {
-  String url = Environment.API_CHAT + 'api/messages';
-
+  String url = '${Environment.API_CHAT}api/messages';
   User user = User.fromJson(GetStorage().read('user') ?? {});
-
-  Future<List<Message>> getMessagesByChat(String idChat) async {
-    Response response = await get(
-        '$url/findByChat/$idChat',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': user.sessionToken!
-        }
-    );
-
-    if (response.statusCode == 401) {
-      Get.snackbar('Peticion denegada', 'tu usuario no tiene permitido obtener esta informacion');
-      return [];
-    }
-
-    List<Message> messages = Message.fromJsonList(response.body);
-
-    return messages;
-  }
-
   Future<ResponseApi> create(Message message) async {
-    Response response = await post(
-        '$url/create',
-        message.toJson(),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': user.sessionToken!
-        }
-    ); // ESTA LINEA
-
+    Response response = await post('$url/create', message.toJson(), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': user.sessionToken!
+    });
     if (response.body == null) {
-      Get.snackbar('Error en la peticion', 'No se pudo actualizar el usuario');
+      Get.snackbar('Error', 'Al actualizar el usuario.');
       return ResponseApi();
     }
-
     ResponseApi responseApi = ResponseApi.fromJson(response.body);
     return responseApi;
   }
 
   Future<Stream> createWithImage(Message message, File image) async {
-    Uri url = Uri.http(Environment.API_CHAT_OLD, '/api/messages/createWithImage');
+    Uri url =
+        Uri.http(Environment.API_CHAT_OLD, '/api/messages/createWithImage');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = user.sessionToken!;
     request.files.add(http.MultipartFile(
-        'image',
-        http.ByteStream(image.openRead().cast()),
-        await image.length(),
-        filename: basename(image.path)
-    ));
+        'image', http.ByteStream(image.openRead().cast()), await image.length(),
+        filename: basename(image.path)));
     request.fields['message'] = json.encode(message);
     final response = await request.send();
     return response.stream.transform(utf8.decoder);
   }
 
   Future<Stream> createWithVideo(Message message, File video) async {
-    Uri url = Uri.http(Environment.API_CHAT_OLD, '/api/messages/createWithVideo');
+    Uri url =
+        Uri.http(Environment.API_CHAT_OLD, '/api/messages/createWithVideo');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = user.sessionToken!;
     request.files.add(http.MultipartFile(
-        'video',
-        http.ByteStream(video.openRead().cast()),
-        await video.length(),
-        filename: basename(video.path)
-    ));
+        'video', http.ByteStream(video.openRead().cast()), await video.length(),
+        filename: basename(video.path)));
     request.fields['message'] = json.encode(message);
     final response = await request.send();
     return response.stream.transform(utf8.decoder);
   }
 
-  Future<ResponseApi> updateToSeen(String idMessage) async {
-    Response response = await put(
-        '$url/updateToSeen',
-        {
-          'id': idMessage
-        },
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': user.sessionToken!
-        }
-    ); // ESTA LINEA
-
-    if (response.body == null) {
-      Get.snackbar('Error en la peticion', 'No se pudo actualizar el usuario');
-      return ResponseApi();
+  Future<List<Message>> getMessagesByChat(String idChat) async {
+    Response response = await get('$url/findByChat/$idChat', headers: {
+      'Content-Type': 'application/json',
+      'Authorization': user.sessionToken!
+    });
+    if (response.statusCode == 401) {
+      Get.snackbar('Peticion denegada',
+          'tu usuario no tiene permitido obtener esta informacion');
+      return [];
     }
-
-    ResponseApi responseApi = ResponseApi.fromJson(response.body);
-    return responseApi;
+    List<Message> messages = Message.fromJsonList(response.body);
+    return messages;
   }
 
   Future<ResponseApi> updateToReceived(String idMessage) async {
-    Response response = await put(
-        '$url/updateToReceived',
-        {
-          'id': idMessage
-        },
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': user.sessionToken!
-        }
-    ); // ESTA LINEA
-
+    Response response = await put('$url/updateToReceived', {
+      'id': idMessage
+    }, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': user.sessionToken!
+    });
     if (response.body == null) {
-      Get.snackbar('Error en la peticion', 'No se pudo actualizar el usuario');
+      Get.snackbar('Error', 'No se pudo actualizar el usuario');
       return ResponseApi();
     }
-
     ResponseApi responseApi = ResponseApi.fromJson(response.body);
     return responseApi;
   }
 
+  Future<ResponseApi> updateToSeen(String idMessage) async {
+    Response response = await put('$url/updateToSeen', {
+      'id': idMessage
+    }, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': user.sessionToken!
+    });
+    if (response.body == null) {
+      Get.snackbar('Error', 'No se pudo actualizar el usuario');
+      return ResponseApi();
+    }
+    ResponseApi responseApi = ResponseApi.fromJson(response.body);
+    return responseApi;
+  }
 }
