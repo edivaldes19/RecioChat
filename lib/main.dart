@@ -9,6 +9,8 @@ import 'package:recio_chat/src/pages/login/login_page.dart';
 import 'package:recio_chat/src/pages/messages/messages_page.dart';
 import 'package:recio_chat/src/pages/profile_edit/profile_edit_page.dart';
 import 'package:recio_chat/src/pages/register/register_page.dart';
+import 'package:recio_chat/src/pages/user_info/user_info_page.dart';
+import 'package:recio_chat/src/view_user_image/view_image_page.dart';
 import 'package:recio_chat/src/providers/push_notifications_provider.dart';
 import 'package:recio_chat/src/utils/default_firebase_config.dart';
 import 'package:recio_chat/src/utils/my_colors.dart';
@@ -36,7 +38,7 @@ PushNotificationsProvider pushNotificationsProvider =
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
   pushNotificationsProvider.showNotification(message);
-  Socket socket = io('${Environment.API_CHAT}chat', <String, dynamic>{
+  Socket socket = io('${Environment.API_RECIO_CHAT}chat', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false
   });
@@ -65,7 +67,9 @@ class _MyAppState extends State<MyApp> {
           GetPage(name: '/register', page: () => RegisterPage()),
           GetPage(name: '/home', page: () => HomePage()),
           GetPage(name: '/profile/edit', page: () => ProfileEditPage()),
-          GetPage(name: '/messages', page: () => MessagesPage())
+          GetPage(name: '/messages', page: () => MessagesPage()),
+          GetPage(name: '/user_info', page: () => UserInfoPage()),
+          GetPage(name: '/view_image', page: () => ViewImagePage())
         ],
         theme: ThemeData(
             primaryColor: MyColors.primaryColor, fontFamily: 'ComicSansMS'),

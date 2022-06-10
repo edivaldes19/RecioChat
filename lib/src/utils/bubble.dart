@@ -14,8 +14,8 @@ class Bubble extends StatelessWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final bg = isMe ? Colors.white : MyColors.primaryColorLight;
-    final align = isMe ? CrossAxisAlignment.start : CrossAxisAlignment.end;
+    final bg = isMe ? MyColors.primaryColorLight : Colors.white;
+    final align = isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     final icon = status == 'ENVIADO'
         ? Icons.done
         : status == 'RECIBIDO'
@@ -23,48 +23,33 @@ class Bubble extends StatelessWidget {
             : Icons.done_all;
     final radius = isMe
         ? const BorderRadius.only(
-            topRight: Radius.circular(5.0),
-            bottomLeft: Radius.circular(10.0),
-            bottomRight: Radius.circular(5.0))
+            topLeft: Radius.circular(24),
+            bottomLeft: Radius.circular(24),
+            bottomRight: Radius.circular(10),
+            topRight: Radius.circular(10))
         : const BorderRadius.only(
-            topLeft: Radius.circular(5.0),
-            bottomLeft: Radius.circular(5.0),
-            bottomRight: Radius.circular(10.0));
-    return Column(crossAxisAlignment: align, children: <Widget>[
-      Container(
-          margin: EdgeInsets.only(
-              right: isMe == true ? 3 : 70,
-              left: isMe == true ? 70 : 3,
-              top: 5,
-              bottom: 5),
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(boxShadow: [
-            BoxShadow(
-                blurRadius: .5,
-                spreadRadius: 1.0,
-                color: Colors.black.withOpacity(.12))
-          ], color: bg, borderRadius: radius),
-          child: Stack(children: <Widget>[
-            Container(
-                padding: EdgeInsets.only(right: isMe == true ? 60 : 57),
-                child: Text(message)),
-            Positioned(
-                bottom: 0.0,
-                right: 0.0,
-                child: Row(children: <Widget>[
-                  Text(time,
-                      style: const TextStyle(
-                        color: Colors.black38,
-                        fontSize: 10.0,
-                      )),
-                  isMe == true
-                      ? Icon(icon,
-                          size: 12.0,
-                          color:
-                              status == 'VISTO' ? Colors.blue : Colors.black38)
-                      : Container()
-                ]))
-          ]))
-    ]);
+            topLeft: Radius.circular(10),
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(24),
+            topRight: Radius.circular(24));
+    return Container(
+        margin: EdgeInsets.only(
+            right: isMe ? 3 : 70, left: isMe ? 70 : 3, top: 5, bottom: 5),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(boxShadow: const [
+          BoxShadow(blurRadius: .5, spreadRadius: 1, color: Colors.grey)
+        ], color: bg, borderRadius: radius),
+        child: Column(crossAxisAlignment: align, children: [
+          Text(message),
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            Text(time,
+                style: const TextStyle(color: Colors.black38, fontSize: 10)),
+            isMe
+                ? Icon(icon,
+                    size: 15,
+                    color: status == 'VISTO' ? Colors.blue : Colors.black38)
+                : Container()
+          ])
+        ]));
   }
 }

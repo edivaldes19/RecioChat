@@ -10,7 +10,7 @@ class HomeController extends GetxController {
   PushNotificationsProvider pushNotificationsProvider =
       PushNotificationsProvider();
   var tabIndex = 0.obs;
-  Socket socket = io('${Environment.API_CHAT}chat', <String, dynamic>{
+  Socket socket = io('${Environment.API_RECIO_CHAT}chat', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false
   });

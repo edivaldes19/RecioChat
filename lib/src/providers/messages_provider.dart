@@ -11,7 +11,7 @@ import 'package:recio_chat/src/models/response_api.dart';
 import 'package:recio_chat/src/models/user.dart';
 
 class MessagesProvider extends GetConnect {
-  String url = '${Environment.API_CHAT}api/messages';
+  String url = '${Environment.API_RECIO_CHAT}api/messages';
   User user = User.fromJson(GetStorage().read('user') ?? {});
   Future<ResponseApi> create(Message message) async {
     Response response = await post('$url/create', message.toJson(), headers: {
@@ -27,9 +27,8 @@ class MessagesProvider extends GetConnect {
   }
 
   Future<Stream> createWithImage(Message message, File image) async {
-    Uri url =
-        Uri.http(Environment.API_CHAT_OLD, '/api/messages/createWithImage');
-    final request = http.MultipartRequest('POST', url);
+    Uri uri = Uri.parse('$url/createWithImage');
+    final request = http.MultipartRequest('POST', uri);
     request.headers['Authorization'] = user.sessionToken!;
     request.files.add(http.MultipartFile(
         'image', http.ByteStream(image.openRead().cast()), await image.length(),
@@ -40,9 +39,8 @@ class MessagesProvider extends GetConnect {
   }
 
   Future<Stream> createWithVideo(Message message, File video) async {
-    Uri url =
-        Uri.http(Environment.API_CHAT_OLD, '/api/messages/createWithVideo');
-    final request = http.MultipartRequest('POST', url);
+    Uri uri = Uri.parse('$url/createWithVideo');
+    final request = http.MultipartRequest('POST', uri);
     request.headers['Authorization'] = user.sessionToken!;
     request.files.add(http.MultipartFile(
         'video', http.ByteStream(video.openRead().cast()), await video.length(),

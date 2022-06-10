@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
+import 'package:recio_chat/src/api/environment.dart';
 import 'package:recio_chat/src/pages/profile/profile_controller.dart';
+import 'package:recio_chat/src/utils/my_colors.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfileController con = Get.put(ProfileController());
@@ -8,37 +11,45 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton:
-            Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-          FloatingActionButton(
-              heroTag: "btn1",
-              onPressed: () => con.goToProfileEdit(),
-              backgroundColor: Colors.lightBlueAccent,
-              child: const Icon(Icons.edit)),
-          const SizedBox(height: 10),
-          FloatingActionButton(
-              heroTag: "btn2",
-              onPressed: () => con.signOut(),
-              backgroundColor: Colors.green,
-              child: const Icon(Icons.power_settings_new))
-        ]),
+        floatingActionButton: SpeedDial(
+            backgroundColor: MyColors.primaryColor,
+            animatedIcon: AnimatedIcons.menu_close,
+            children: [
+              SpeedDialChild(
+                  onTap: () => con.showAlertDialog(context),
+                  child: const Icon(Icons.exit_to_app),
+                  label: 'Cerrar sesión'),
+              SpeedDialChild(
+                  onTap: () => con.goToProfileEdit(),
+                  child: const Icon(Icons.edit),
+                  label: 'Editar perfil')
+            ]),
         body: Obx(() => SafeArea(
-                child: Column(children: [
+                child: SingleChildScrollView(
+                    child: Column(children: [
               circleImageUser(),
               const SizedBox(height: 20),
               userInfo(
-                  'Nombre del usuario',
-                  '${con.user.value.name ?? 'Desconocido'} ${con.user.value.lastname ?? 'Desconocido'}',
+                  con.user.value.name != null && con.user.value.lastname != null
+                      ? '${con.user.value.name} ${con.user.value.lastname}'
+                      : 'Desconocido',
+                  'Nombre(s) y apellido(s)',
                   Icons.person),
-              userInfo('Correo electrónico',
-                  con.user.value.email ?? 'Desconocido', Icons.email),
-              userInfo('Teléfono', con.user.value.phone ?? 'Desconocido',
-                  Icons.phone)
-            ]))));
+              userInfo(con.user.value.email ?? 'Desconocido',
+                  'Correo electrónico', Icons.email),
+              userInfo(con.user.value.phone ?? 'Desconocido', 'Teléfono',
+                  Icons.phone),
+              userInfo(con.user.value.updatedAt ?? 'Desconocido',
+                  'Última actualización', Icons.update),
+              userInfo(con.user.value.createdAt ?? 'Desconocido',
+                  'Fecha de creación', Icons.date_range),
+              const SizedBox(height: 20)
+            ])))));
   }
 
   Widget circleImageUser() {
-    return Center(
+    return GestureDetector(
+        onTap: () => con.goToViewImage(),
         child: Container(
             margin: const EdgeInsets.only(top: 30),
             width: 200,
@@ -47,17 +58,13 @@ class ProfilePage extends StatelessWidget {
                 child: ClipOval(
                     child: FadeInImage.assetNetwork(
                         fit: BoxFit.cover,
-                        placeholder: 'assets/img/user_profile_2.png',
-                        image: con.user.value.image ??
-                            'https://devshift.biz/wp-content/uploads/2017/04/profile-icon-png-898-450x450.png')))));
+                        placeholder: 'assets/img/loading.png',
+                        image:
+                            con.user.value.image ?? Environment.IMAGE_URL)))));
   }
 
   Widget userInfo(String title, String subtitle, IconData iconData) {
-    return Container(
-        margin: const EdgeInsets.only(left: 30, right: 30),
-        child: ListTile(
-            title: Text(title),
-            subtitle: Text(subtitle),
-            leading: Icon(iconData)));
+    return ListTile(
+        title: Text(title), subtitle: Text(subtitle), leading: Icon(iconData));
   }
 }

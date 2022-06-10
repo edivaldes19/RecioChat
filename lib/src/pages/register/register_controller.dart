@@ -29,14 +29,10 @@ class RegisterController extends GetxController {
     confirmPasswordController.clear();
   }
 
-  void goToHomePage() {
-    Get.offNamedUntil('/home', (route) => false);
-  }
-
   bool isValidForm(String email, String name, String lastname, String phone,
       String password, String confirmPassword) {
     if (email.isEmpty) {
-      Get.snackbar('Error', 'Debes ingresar el correo electrónico.');
+      Get.snackbar('Error', 'Correo electrónico vacío.');
       return false;
     }
     if (!GetUtils.isEmail(email)) {
@@ -44,23 +40,28 @@ class RegisterController extends GetxController {
       return false;
     }
     if (name.isEmpty) {
-      Get.snackbar('Error', 'Debes ingresar tu nombre.');
+      Get.snackbar('Error', 'Nombre(s) vacío(s).');
       return false;
     }
     if (lastname.isEmpty) {
-      Get.snackbar('Error', 'Debes ingresar tu apellido.');
+      Get.snackbar('Error', 'Apellido(s) vacío(s).');
       return false;
     }
     if (phone.isEmpty) {
-      Get.snackbar('Error', 'Debes ingresar tu numero de telefono.');
+      Get.snackbar('Error', 'Teléfono vacío.');
       return false;
     }
     if (password.isEmpty) {
-      Get.snackbar('Error', 'Debes ingresar tu contraseña.');
+      Get.snackbar('Error', 'Contraseña vacía.');
+      return false;
+    }
+    if (password.length < 6) {
+      Get.snackbar(
+          'Error', 'La contraseña debe ser mayor o igual a 6 caracteres.');
       return false;
     }
     if (confirmPassword.isEmpty) {
-      Get.snackbar('Error', 'Debes confirmar tu contraseña.');
+      Get.snackbar('Error', 'Confirmar contraseña vacía.');
       return false;
     }
     if (password != confirmPassword) {
@@ -98,7 +99,7 @@ class RegisterController extends GetxController {
           clearForm();
           User user = User.fromJson(responseApi.data);
           GetStorage().write('user', user.toJson());
-          goToHomePage();
+          Get.offNamedUntil('/home', (route) => false);
         } else {
           Get.snackbar('No se pudo crear el usuario', responseApi.message!);
         }

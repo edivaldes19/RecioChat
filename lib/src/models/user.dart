@@ -14,6 +14,8 @@ class User {
   String? image;
   String? isAvailable;
   String? notificationToken;
+  String? updatedAt;
+  String? createdAt;
   User(
       {this.id,
       this.email,
@@ -24,7 +26,9 @@ class User {
       this.sessionToken,
       this.image,
       this.isAvailable,
-      this.notificationToken});
+      this.notificationToken,
+      this.updatedAt,
+      this.createdAt});
   factory User.fromJson(Map<String, dynamic> json) => User(
       id: json["id"],
       email: json["email"],
@@ -35,7 +39,9 @@ class User {
       sessionToken: json["session_token"],
       image: json["image"],
       isAvailable: json["is_available"],
-      notificationToken: json["notification_token"]);
+      notificationToken: json["notification_token"],
+      updatedAt: json["updated_at"],
+      createdAt: json["created_at"]);
   Map<String, dynamic> toJson() => {
         "id": id,
         "email": email,
@@ -46,7 +52,9 @@ class User {
         "session_token": sessionToken,
         "image": image,
         "is_available": isAvailable,
-        "notification_token": notificationToken
+        "notification_token": notificationToken,
+        "updated_at": updatedAt,
+        "created_at": createdAt,
       };
   static List<User> fromJsonList(List<dynamic> jsonList) {
     List<User> toList = [];

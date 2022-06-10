@@ -10,7 +10,7 @@ import 'package:recio_chat/src/models/response_api.dart';
 import 'package:recio_chat/src/models/user.dart';
 
 class UsersProvider extends GetConnect {
-  String url = '${Environment.API_CHAT}api/users';
+  String url = '${Environment.API_RECIO_CHAT}api/users';
   User user = User.fromJson(GetStorage().read('user') ?? {});
   Future<Response> checkIfIsOnline(String idUser) async {
     Response response = await get('$url/checkIfIsOnline/$idUser', headers: {
@@ -41,8 +41,8 @@ class UsersProvider extends GetConnect {
   }
 
   Future<Stream> createWithImage(User user, File image) async {
-    Uri url = Uri.http(Environment.API_CHAT_OLD, '/api/users/create');
-    final request = http.MultipartRequest('POST', url);
+    Uri uri = Uri.parse('$url/create');
+    final request = http.MultipartRequest('POST', uri);
     request.files.add(http.MultipartFile(
         'image', http.ByteStream(image.openRead().cast()), await image.length(),
         filename: basename(image.path)));
@@ -107,8 +107,8 @@ class UsersProvider extends GetConnect {
   }
 
   Future<Stream> updateWithImage(User user, File image) async {
-    Uri url = Uri.http(Environment.API_CHAT_OLD, '/api/users/updateWithImage');
-    final request = http.MultipartRequest('PUT', url);
+    Uri uri = Uri.parse('$url/updateWithImage');
+    final request = http.MultipartRequest('PUT', uri);
     request.headers['Authorization'] = user.sessionToken!;
     request.files.add(http.MultipartFile(
         'image', http.ByteStream(image.openRead().cast()), await image.length(),

@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:recio_chat/src/models/response_api.dart';
 import 'package:recio_chat/src/models/user.dart';
 import 'package:recio_chat/src/pages/profile/profile_controller.dart';
@@ -68,7 +70,9 @@ class ProfileEditController extends GetxController {
         phone: phone,
         email: user.email,
         sessionToken: user.sessionToken,
-        image: user.image);
+        image: user.image,
+        updatedAt: DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
+        createdAt: user.createdAt);
     ProgressDialog progressDialog = ProgressDialog(context: context);
     progressDialog.show(max: 100, msg: 'Actualizando perfil de usuario...');
     if (imageFile == null) {
@@ -78,7 +82,9 @@ class ProfileEditController extends GetxController {
         User userResponse = User.fromJson(responseApi.data);
         GetStorage().write('user', userResponse.toJson());
         profileController.user.value = userResponse;
-        Get.snackbar('Éxito', responseApi.message!);
+        Fluttertoast.showToast(
+            msg: responseApi.message ?? 'Perfil actualizado exitosamente.');
+        Get.back();
       } else {
         Get.snackbar('Error', responseApi.message!);
       }
@@ -91,7 +97,9 @@ class ProfileEditController extends GetxController {
           User userResponse = User.fromJson(responseApi.data);
           GetStorage().write('user', userResponse.toJson());
           profileController.user.value = userResponse;
-          Get.snackbar('Éxito', responseApi.message!);
+          Fluttertoast.showToast(
+              msg: responseApi.message ?? 'Perfil actualizado exitosamente.');
+          Get.back();
         } else {
           Get.snackbar('Error', responseApi.message!);
         }

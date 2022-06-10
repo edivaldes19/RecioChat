@@ -4,6 +4,7 @@ import 'package:recio_chat/src/api/environment.dart';
 import 'package:recio_chat/src/models/user.dart';
 import 'package:recio_chat/src/pages/users/users_controller.dart';
 import 'package:recio_chat/src/utils/my_colors.dart';
+import 'package:recio_chat/src/widgets/no_data_widget.dart';
 
 class UsersPage extends StatelessWidget {
   UsersController con = Get.put(UsersController());
@@ -26,10 +27,12 @@ class UsersPage extends StatelessWidget {
                             return cardUser(snapshot.data![index]);
                           });
                     } else {
-                      return Container();
+                      return NoDataWidget(
+                          text: 'Actualmente eres el único usuario.');
                     }
                   } else {
-                    return Container();
+                    return NoDataWidget(
+                        text: 'Actualmente eres el único usuario.');
                   }
                 })));
   }
@@ -37,8 +40,13 @@ class UsersPage extends StatelessWidget {
   Widget cardUser(User user) {
     return ListTile(
         onTap: () => con.goToChat(user),
-        title: Text(user.name ?? ''),
-        subtitle: Text(user.email ?? ''),
+        title: Text(
+            user.name != null && user.lastname != null
+                ? '${user.name} ${user.lastname}'
+                : 'Desconocido',
+            style: const TextStyle(fontSize: 14)),
+        subtitle: Text(user.email ?? 'Desconocido',
+            style: const TextStyle(fontSize: 12)),
         leading: AspectRatio(
             aspectRatio: 1,
             child: ClipOval(

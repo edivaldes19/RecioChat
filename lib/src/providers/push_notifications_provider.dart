@@ -83,7 +83,7 @@ class PushNotificationsProvider extends GetConnect {
         message.data['title'],
         message.data['body'],
         NotificationDetails(android: androidPlatformChannelSpecifics));
-    Socket socket = io('${Environment.API_CHAT}chat', <String, dynamic>{
+    Socket socket = io('${Environment.API_RECIO_CHAT}chat', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false
     });

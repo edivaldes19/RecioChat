@@ -28,9 +28,9 @@ class BubbleVideo extends StatefulWidget {
 class _BubbleVideoState extends State<BubbleVideo> {
   @override
   Widget build(BuildContext context) {
-    final bg = widget.isMe ? Colors.white : MyColors.primaryColorLight;
+    final bg = widget.isMe ? MyColors.primaryColorLight : Colors.white;
     final align =
-        widget.isMe ? CrossAxisAlignment.start : CrossAxisAlignment.end;
+        widget.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     final icon = widget.status == 'ENVIADO'
         ? Icons.done
         : widget.status == 'RECIBIDO'
@@ -38,63 +38,52 @@ class _BubbleVideoState extends State<BubbleVideo> {
             : Icons.done_all;
     final radius = widget.isMe
         ? const BorderRadius.only(
-            topRight: Radius.circular(5),
-            bottomLeft: Radius.circular(10),
-            bottomRight: Radius.circular(5))
+            topLeft: Radius.circular(24),
+            bottomLeft: Radius.circular(24),
+            bottomRight: Radius.circular(10),
+            topRight: Radius.circular(10))
         : const BorderRadius.only(
-            topLeft: Radius.circular(5),
-            bottomLeft: Radius.circular(5),
-            bottomRight: Radius.circular(10));
-    return Column(crossAxisAlignment: align, children: <Widget>[
-      Container(
-          margin: EdgeInsets.only(
-              right: widget.isMe == true ? 3 : 70,
-              left: widget.isMe == true ? 70 : 3,
-              top: 5,
-              bottom: 5),
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(boxShadow: [
-            BoxShadow(
-                blurRadius: .5,
-                spreadRadius: 1,
-                color: Colors.black.withOpacity(.12))
-          ], color: bg, borderRadius: radius),
-          child: Stack(children: <Widget>[
-            Container(
-                padding: const EdgeInsets.only(bottom: 22),
-                child: GestureDetector(
-                    onTap: () => playVideo(),
-                    child: Stack(children: [
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          child: widget.videoController?.value.isInitialized ==
-                                  true
-                              ? AspectRatio(
-                                  aspectRatio: widget.videoController?.value
-                                      .aspectRatio as double,
-                                  child: Chewie(
-                                      controller: widget.chewieController!))
-                              : _buildImageWait())
-                    ]))),
-            Positioned(
-                bottom: 0,
-                right: 0,
-                child: Row(children: <Widget>[
-                  Text(widget.time,
-                      style:
-                          const TextStyle(color: Colors.black38, fontSize: 10)),
-                  const SizedBox(width: 3),
-                  widget.isMe == true
-                      ? Icon(icon,
-                          size: 12,
-                          color: widget.status == 'VISTO'
-                              ? Colors.blue
-                              : Colors.black38)
-                      : Container()
-                ]))
-          ]))
-    ]);
+            topLeft: Radius.circular(10),
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(24),
+            topRight: Radius.circular(24));
+    return Container(
+        margin: EdgeInsets.only(
+            right: widget.isMe ? 3 : 70,
+            left: widget.isMe ? 70 : 3,
+            top: 5,
+            bottom: 5),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(boxShadow: const [
+          BoxShadow(blurRadius: .5, spreadRadius: 1, color: Colors.grey)
+        ], color: bg, borderRadius: radius),
+        child: Column(crossAxisAlignment: align, children: [
+          Container(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: GestureDetector(
+                  onTap: () => playVideo(),
+                  child: Stack(children: [
+                    Container(
+                        child:
+                            widget.videoController?.value.isInitialized == true
+                                ? AspectRatio(
+                                    aspectRatio: widget.videoController?.value
+                                        .aspectRatio as double,
+                                    child: Chewie(
+                                        controller: widget.chewieController!))
+                                : _buildImageWait())
+                  ]))),
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            Text(widget.time,
+                style: const TextStyle(color: Colors.black38, fontSize: 10)),
+            widget.isMe
+                ? Icon(icon,
+                    size: 15,
+                    color:
+                        widget.status == 'VISTO' ? Colors.blue : Colors.black38)
+                : Container()
+          ])
+        ]));
   }
 
   @override
@@ -129,14 +118,13 @@ class _BubbleVideoState extends State<BubbleVideo> {
   }
 
   Widget _buildImageWait() {
-    return widget.isLoading == true
+    return widget.isLoading
         ? Container(
             width: MediaQuery.of(context).size.width,
             height: 200,
             color: Colors.grey[300],
             alignment: Alignment.center,
-            child: const Text('Cargando video...'),
-          )
+            child: const Text('Cargando video...'))
         : Container(
             width: MediaQuery.of(context).size.width,
             height: 200,

@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
   Widget bottomNavigationBar(BuildContext ctx) {
     return Obx(() => MediaQuery(
-        data: MediaQuery.of(ctx).copyWith(textScaleFactor: 1.0),
+        data: MediaQuery.of(ctx).copyWith(textScaleFactor: 1),
         child: SizedBox(
             height: 54,
             child: BottomNavigationBar(
@@ -22,17 +22,17 @@ class HomePage extends StatelessWidget {
                 backgroundColor: MyColors.primaryColor,
                 unselectedItemColor: Colors.white.withOpacity(0.5),
                 selectedItemColor: Colors.white,
-                items: [
+                items: const [
                   BottomNavigationBarItem(
-                      icon: const Icon(Icons.chat, size: 20),
+                      icon: Icon(Icons.chat, size: 20),
                       label: 'Chats',
                       backgroundColor: MyColors.primaryColor),
                   BottomNavigationBarItem(
-                      icon: const Icon(Icons.person, size: 20),
+                      icon: Icon(Icons.group, size: 20),
                       label: 'Usuarios',
                       backgroundColor: MyColors.primaryColor),
                   BottomNavigationBarItem(
-                      icon: const Icon(Icons.person_pin_rounded, size: 20),
+                      icon: Icon(Icons.person, size: 20),
                       label: 'Mi perfil',
                       backgroundColor: MyColors.primaryColor)
                 ]))));

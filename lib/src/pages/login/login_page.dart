@@ -9,102 +9,94 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SizedBox(
-            width: double.infinity,
-            child: Stack(children: [
-              Positioned(top: -80, left: -100, child: _circleLogin()),
-              Positioned(top: 60, left: 25, child: _textLogin()),
-              SingleChildScrollView(
-                  child: Column(children: [
-                _imageBanner(context),
-                _textFieldEmail(),
-                _textFieldPassword(),
-                _buttonLogin(),
-                _textDontHaveAccount()
-              ]))
-            ])));
+        body: SafeArea(
+            child: SingleChildScrollView(
+                child: Column(children: [
+      _textLogin(),
+      _imageIconApp(context),
+      _textFieldEmail(),
+      _textFieldPassword(),
+      _buttonLogin(),
+      _textDontHaveAccount()
+    ]))));
   }
 
   Widget _buttonLogin() {
     return Container(
         width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
+        margin: const EdgeInsets.all(25),
         child: ElevatedButton(
             onPressed: () => con.login(),
             style: ElevatedButton.styleFrom(
                 primary: MyColors.primaryColor,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
-                padding: const EdgeInsets.symmetric(vertical: 15)),
+                    borderRadius: BorderRadius.circular(24)),
+                padding: const EdgeInsets.symmetric(vertical: 5)),
             child: const Text('Iniciar sesión')));
   }
 
-  Widget _circleLogin() {
+  Widget _imageIconApp(BuildContext ctx) {
     return Container(
-        width: 240,
-        height: 230,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-            color: MyColors.primaryColor));
-  }
-
-  Widget _imageBanner(BuildContext ctx) {
-    return Container(
-        margin: EdgeInsets.only(
-            top: 130, bottom: MediaQuery.of(ctx).size.height * 0.15),
+        margin: const EdgeInsets.all(25),
         child: Image.asset('assets/img/icon_app.png', width: 200, height: 200));
   }
 
   Widget _textDontHaveAccount() {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text('¿No tienes cuenta?',
-          style: TextStyle(color: MyColors.primaryColor)),
-      const SizedBox(width: 7),
-      GestureDetector(
-          onTap: () => Get.toNamed('/register'),
-          child: Text('Registrate',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: MyColors.primaryColor)))
-    ]);
+    return Container(
+        margin: const EdgeInsets.all(25),
+        child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Text('¿No tienes cuenta?...',
+                  style: TextStyle(color: MyColors.primaryColor)),
+              const SizedBox(width: 10),
+              GestureDetector(
+                  onTap: () => con.goToRegisterPage(),
+                  child: const Text('Registrate aquí',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: MyColors.primaryColor)))
+            ])));
   }
 
   Widget _textFieldEmail() {
     return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-        decoration: BoxDecoration(
-            color: MyColors.primaryOpacityColor,
-            borderRadius: BorderRadius.circular(30)),
+        margin: const EdgeInsets.only(left: 25, right: 25, bottom: 5, top: 25),
         child: TextField(
+            maxLength: 50,
+            textInputAction: TextInputAction.next,
             controller: con.emailController,
             keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
                 hintText: 'Correo electrónico',
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.all(15),
+                border: OutlineInputBorder(),
                 hintStyle: TextStyle(color: MyColors.primaryColorDark),
                 prefixIcon: Icon(Icons.email, color: MyColors.primaryColor))));
   }
 
   Widget _textFieldPassword() {
     return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-        decoration: BoxDecoration(
-            color: MyColors.primaryOpacityColor,
-            borderRadius: BorderRadius.circular(30)),
+        margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
         child: TextField(
+            maxLength: 50,
+            textInputAction: TextInputAction.done,
             controller: con.passwordController,
             obscureText: true,
-            decoration: InputDecoration(
+            keyboardType: TextInputType.visiblePassword,
+            decoration: const InputDecoration(
                 hintText: 'Contraseña',
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.all(15),
+                border: OutlineInputBorder(),
                 hintStyle: TextStyle(color: MyColors.primaryColorDark),
                 prefixIcon: Icon(Icons.lock, color: MyColors.primaryColor))));
   }
 
   Widget _textLogin() {
-    return const Text('Bienvenido(a)',
-        style: TextStyle(
-            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22));
+    return Container(
+        margin: const EdgeInsets.all(25),
+        child: const Text('Bienvenido(a)',
+            style: TextStyle(
+                color: MyColors.primaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 20)));
   }
 }

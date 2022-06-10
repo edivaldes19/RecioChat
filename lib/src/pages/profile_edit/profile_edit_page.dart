@@ -10,33 +10,33 @@ class ProfileEditPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: const Text('Mi perfil'),
+            title: const Text('Perfil'),
             backgroundColor: MyColors.primaryColor),
-        bottomNavigationBar: _buttonRegister(context),
         body: SafeArea(
-            child: Column(children: [
+            child: SingleChildScrollView(
+                child: Column(children: [
           const SizedBox(height: 50),
           _imageUser(context),
-          const SizedBox(height: 20),
+          const SizedBox(height: 25),
           _textFieldName(),
           _textFieldLastName(),
-          _textFieldPhone()
-        ])));
+          _textFieldPhone(),
+          _buttonUpdateProfile(context)
+        ]))));
   }
 
-  Widget _buttonRegister(BuildContext ctx) {
+  Widget _buttonUpdateProfile(BuildContext ctx) {
     return Container(
         width: double.infinity,
-        height: 50,
-        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
+        margin: const EdgeInsets.all(25),
         child: ElevatedButton(
             onPressed: () => con.updateUser(ctx),
             style: ElevatedButton.styleFrom(
                 primary: MyColors.primaryColor,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
-                padding: const EdgeInsets.symmetric(vertical: 15)),
-            child: const Text('Actualizar perfil')));
+                    borderRadius: BorderRadius.circular(24)),
+                padding: const EdgeInsets.symmetric(vertical: 5)),
+            child: const Text('Editar perfil')));
   }
 
   Widget _imageUser(BuildContext ctx) {
@@ -50,58 +50,52 @@ class ProfileEditPage extends StatelessWidget {
                         ? NetworkImage(con.user.image!)
                         : const AssetImage('assets/img/user.png')
                             as ImageProvider,
-                radius: 60,
+                radius: 50,
                 backgroundColor: Colors.grey[300])));
   }
 
   Widget _textFieldLastName() {
     return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-        decoration: BoxDecoration(
-            color: MyColors.primaryOpacityColor,
-            borderRadius: BorderRadius.circular(30)),
+        margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
         child: TextField(
+            maxLength: 50,
+            textInputAction: TextInputAction.next,
             controller: con.lastnameController,
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(
-                hintText: 'Apellido',
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.all(15),
+            keyboardType: TextInputType.name,
+            decoration: const InputDecoration(
+                hintText: 'Apellido(s)',
+                border: OutlineInputBorder(),
                 hintStyle: TextStyle(color: MyColors.primaryColorDark),
-                prefixIcon:
-                    Icon(Icons.person_outline, color: MyColors.primaryColor))));
+                prefixIcon: Icon(Icons.person, color: MyColors.primaryColor))));
   }
 
   Widget _textFieldName() {
     return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-        decoration: BoxDecoration(
-            color: MyColors.primaryOpacityColor,
-            borderRadius: BorderRadius.circular(30)),
+        margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
         child: TextField(
+            maxLength: 50,
+            textInputAction: TextInputAction.next,
             controller: con.nameController,
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(
-                hintText: 'Nombre',
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.all(15),
+            keyboardType: TextInputType.name,
+            decoration: const InputDecoration(
+                hintText: 'Nombre(s)',
+                border: OutlineInputBorder(),
                 hintStyle: TextStyle(color: MyColors.primaryColorDark),
                 prefixIcon: Icon(Icons.person, color: MyColors.primaryColor))));
   }
 
   Widget _textFieldPhone() {
     return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-        decoration: BoxDecoration(
-            color: MyColors.primaryOpacityColor,
-            borderRadius: BorderRadius.circular(30)),
+        margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
         child: TextField(
+            maxLength: 10,
+            textInputAction: TextInputAction.done,
             controller: con.phoneController,
             keyboardType: TextInputType.phone,
-            decoration: InputDecoration(
-                hintText: 'Telefono',
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.all(15),
+            decoration: const InputDecoration(
+                hintText: 'Teléfono',
+                prefix: Text('+52'),
+                border: OutlineInputBorder(),
                 hintStyle: TextStyle(color: MyColors.primaryColorDark),
                 prefixIcon: Icon(Icons.phone, color: MyColors.primaryColor))));
   }

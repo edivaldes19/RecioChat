@@ -6,7 +6,7 @@ import 'package:recio_chat/src/models/response_api.dart';
 import 'package:recio_chat/src/models/user.dart';
 
 class ChatsProvider extends GetConnect {
-  String url = '${Environment.API_CHAT}api/chats';
+  String url = '${Environment.API_RECIO_CHAT}api/chats';
   User user = User.fromJson(GetStorage().read('user') ?? {});
   Future<ResponseApi> create(Chat chat) async {
     Response response = await post('$url/create', chat.toJson(), headers: {

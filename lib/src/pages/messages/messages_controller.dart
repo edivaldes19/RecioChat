@@ -112,6 +112,10 @@ class MessagesController extends GetxController {
     });
   }
 
+  void goToInfoUserChat() {
+    Get.toNamed('/user_info', arguments: {'userChat': userChat.toJson()});
+  }
+
   void listenMessage() {
     homeController.socket.on('message/$idChat', (data) {
       getMessages();
@@ -179,7 +183,7 @@ class MessagesController extends GetxController {
       progressDialog.show(max: 100, msg: 'Subiendo imagen...');
       File? compressFile = await compressAndGetFile(imageFile!, targetPath);
       Message message = Message(
-          message: 'IMAGEN',
+          message: '📷 Imagen',
           idSender: myUser.id,
           idReceiver: userChat.id,
           idChat: idChat,
@@ -192,7 +196,7 @@ class MessagesController extends GetxController {
         ResponseApi responseApi = ResponseApi.fromJson(json.decode(res));
         if (responseApi.success == true) {
           sendNotification(
-            '📷Imagen',
+            '📷 Imagen',
             responseApi.data['id'] as String,
             url: responseApi.data['url'] as String,
           );
@@ -209,7 +213,7 @@ class MessagesController extends GetxController {
       ProgressDialog progressDialog = ProgressDialog(context: context);
       progressDialog.show(max: 100, msg: 'Subiendo video...');
       Message message = Message(
-          message: 'VIDEO',
+          message: '🎥 Video',
           idSender: myUser.id,
           idReceiver: userChat.id,
           idChat: idChat,
@@ -222,7 +226,7 @@ class MessagesController extends GetxController {
         ResponseApi responseApi = ResponseApi.fromJson(json.decode(res));
         if (responseApi.success == true) {
           sendNotification(
-            '🎥Video',
+            '🎥 Video',
             responseApi.data as String,
           );
           emitMessage();
@@ -232,7 +236,7 @@ class MessagesController extends GetxController {
   }
 
   void sendMessage() async {
-    String messageText = messageController.text;
+    String messageText = messageController.text.trim();
     if (messageText.isEmpty) {
       Get.snackbar('Error', 'El mensaje no puede ser vacío.');
       return;
@@ -269,7 +273,7 @@ class MessagesController extends GetxController {
         userChat.notificationToken ?? '', data);
   }
 
-  void showAlertDialog(BuildContext context) {
+  void showAlertDialogForImage(BuildContext context) {
     Widget galleryButton = ElevatedButton(
         onPressed: () {
           Get.back();
