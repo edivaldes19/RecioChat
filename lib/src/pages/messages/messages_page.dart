@@ -14,33 +14,48 @@ import 'package:recio_chat/src/utils/relative_time_util.dart';
 class MessagesPage extends StatelessWidget {
   MessagesController con = Get.put(MessagesController());
   MessagesPage({Key? key}) : super(key: key);
-  Widget bubbleMessage(Message message) {
+  Widget bubbleMessage(Message message, BuildContext ctx) {
     if (message.isImage == true) {
-      return BubbleImage(
-          message: message.message ?? 'Desconocido',
-          time: RelativeTimeUtil.getRelativeTime(message.timestamp ?? 0),
-          delivered: true,
-          isMe: message.idSender == con.myUser.id ? true : false,
-          status: message.status ?? 'ENVIADO',
-          isImage: true,
-          url: message.url ?? Environment.IMAGE_URL);
+      return GestureDetector(
+          onLongPress: () => con.myUser.id == message.idSender
+              ? con.askToDeleteMessage(message, ctx)
+              : Get.snackbar(
+                  'Error', 'No puedes eliminar mensajes que no son tuyos.'),
+          child: BubbleImage(
+              message: message.message ?? 'Desconocido',
+              time: RelativeTimeUtil.getRelativeTime(message.timestamp ?? 0),
+              delivered: true,
+              isMe: message.idSender == con.myUser.id ? true : false,
+              status: message.status ?? 'ENVIADO',
+              isImage: true,
+              url: message.url ?? Environment.IMAGE_URL));
     }
     if (message.isVideo == true) {
-      return BubbleVideo(
-          message: message.message ?? 'Desconocido',
-          time: RelativeTimeUtil.getRelativeTime(message.timestamp ?? 0),
-          delivered: true,
-          isMe: message.idSender == con.myUser.id ? true : false,
-          status: message.status ?? 'ENVIADO',
-          url: message.url ?? Environment.IMAGE_URL,
-          videoController: message.controller);
+      return GestureDetector(
+          onLongPress: () => con.myUser.id == message.idSender
+              ? con.askToDeleteMessage(message, ctx)
+              : Get.snackbar(
+                  'Error', 'No puedes eliminar mensajes que no son tuyos.'),
+          child: BubbleVideo(
+              message: message.message ?? 'Desconocido',
+              time: RelativeTimeUtil.getRelativeTime(message.timestamp ?? 0),
+              delivered: true,
+              isMe: message.idSender == con.myUser.id ? true : false,
+              status: message.status ?? 'ENVIADO',
+              url: message.url ?? Environment.IMAGE_URL,
+              videoController: message.controller));
     }
-    return Bubble(
-        message: message.message ?? 'Desconocido',
-        delivered: true,
-        isMe: message.idSender == con.myUser.id ? true : false,
-        status: message.status ?? 'ENVIADO',
-        time: RelativeTimeUtil.getRelativeTime(message.timestamp ?? 0));
+    return GestureDetector(
+        onLongPress: () => con.myUser.id == message.idSender
+            ? con.askToDeleteMessage(message, ctx)
+            : Get.snackbar(
+                'Error', 'No puedes eliminar mensajes que no son tuyos.'),
+        child: Bubble(
+            message: message.message ?? 'Desconocido',
+            delivered: true,
+            isMe: message.idSender == con.myUser.id ? true : false,
+            status: message.status ?? 'ENVIADO',
+            time: RelativeTimeUtil.getRelativeTime(message.timestamp ?? 0)));
   }
 
   @override
@@ -54,7 +69,7 @@ class MessagesPage extends StatelessWidget {
                   child: ListView(
                       reverse: true,
                       controller: con.scrollController,
-                      children: getMessages())),
+                      children: getMessages(context))),
               messagesBox(context)
             ])));
   }
@@ -91,14 +106,14 @@ class MessagesPage extends StatelessWidget {
                                 Environment.IMAGE_URL))))));
   }
 
-  List<Widget> getMessages() {
+  List<Widget> getMessages(BuildContext ctx) {
     return con.messages.map((msg) {
       return Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           alignment: msg.idSender == con.myUser.id
               ? Alignment.centerRight
               : Alignment.centerLeft,
-          child: bubbleMessage(msg));
+          child: bubbleMessage(msg, ctx));
     }).toList();
   }
 

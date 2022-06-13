@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:recio_chat/src/models/chat.dart';
+import 'package:recio_chat/src/models/response_api.dart';
 import 'package:recio_chat/src/models/user.dart';
 import 'package:recio_chat/src/pages/home/home_controller.dart';
 import 'package:recio_chat/src/providers/chats_provider.dart';
@@ -14,6 +17,36 @@ class ChatsController extends GetxController {
     getChats();
     listenMessage();
   }
+  void askToDeleteChat(Chat chat, BuildContext ctx) {
+    Widget cancelButton = ElevatedButton(
+        onPressed: () => Get.back(), child: const Text('Cancelar'));
+    Widget acceptButton = ElevatedButton(
+        onPressed: () async {
+          Get.back();
+          if (chat.id != null) {
+            ResponseApi responseApi = await chatsProvider.deleteChat(chat.id!);
+            if (responseApi.success == true) {
+              getChats();
+              Fluttertoast.showToast(
+                  msg: responseApi.message ?? 'Chat eliminado exitosamente.');
+            } else {
+              Get.snackbar(
+                  'Error', responseApi.message ?? 'Al eliminar el chat.');
+            }
+          }
+        },
+        child: const Text('Eliminar'));
+    AlertDialog alertDialog = AlertDialog(
+        title: Text(
+            '¿Desea eliminar el Chat con ${chat.idUser1 == myUser.id ? '${chat.nameUser2} ${chat.lastnameUser2}' : '${chat.nameUser1} ${chat.lastnameUser1}'}?'),
+        actions: [cancelButton, acceptButton]);
+    showDialog(
+        context: ctx,
+        builder: (BuildContext context) {
+          return alertDialog;
+        });
+  }
+
   void getChats() async {
     var result = await chatsProvider.getChats();
     chats.clear();

@@ -11,7 +11,7 @@ class ChatsProvider extends GetConnect {
   Future<ResponseApi> create(Chat chat) async {
     Response response = await post('$url/create', chat.toJson(), headers: {
       'Content-Type': 'application/json',
-      'Authorization': user.sessionToken!
+      'Authorization': user.sessionToken ?? ''
     });
     if (response.body == null) {
       Get.snackbar('Error', 'Error al crear el chat.');
@@ -21,10 +21,23 @@ class ChatsProvider extends GetConnect {
     return responseApi;
   }
 
+  Future<ResponseApi> deleteChat(String idChat) async {
+    Response response = await delete('$url/deleteChat/$idChat', headers: {
+      'Content-Type': 'application/json',
+      'Authorization': user.sessionToken ?? ''
+    });
+    if (response.body == null) {
+      Get.snackbar('Error', 'Servidor no disponible.');
+      return ResponseApi();
+    }
+    ResponseApi responseApi = ResponseApi.fromJson(response.body);
+    return responseApi;
+  }
+
   Future<List<Chat>> getChats() async {
     Response response = await get('$url/findByIdUser/${user.id}', headers: {
       'Content-Type': 'application/json',
-      'Authorization': user.sessionToken!
+      'Authorization': user.sessionToken ?? ''
     });
     if (response.statusCode == 401) {
       Get.snackbar('Error', 'Sin autorización.');

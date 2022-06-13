@@ -15,7 +15,7 @@ class UsersProvider extends GetConnect {
   Future<Response> checkIfIsOnline(String idUser) async {
     Response response = await get('$url/checkIfIsOnline/$idUser', headers: {
       'Content-Type': 'application/json',
-      'Authorization': user.sessionToken!
+      'Authorization': user.sessionToken ?? ''
     });
     return response;
   }
@@ -33,7 +33,7 @@ class UsersProvider extends GetConnect {
     });
     Response response = await post('$url/create', form);
     if (response.body == null) {
-      Get.snackbar('Error', 'No se pudo crear el usuario');
+      Get.snackbar('Error', 'Servidor no disponible.');
       return ResponseApi();
     }
     ResponseApi responseApi = ResponseApi.fromJson(response.body);
@@ -42,6 +42,7 @@ class UsersProvider extends GetConnect {
 
   Future<Stream> createWithImage(User user, File image) async {
     Uri uri = Uri.parse('$url/create');
+    // Uri uri = Uri.http(Environment.API_CHAT_OLD, '/api/users/create');
     final request = http.MultipartRequest('POST', uri);
     request.files.add(http.MultipartFile(
         'image', http.ByteStream(image.openRead().cast()), await image.length(),
@@ -54,7 +55,7 @@ class UsersProvider extends GetConnect {
   Future<List<User>> getUsers() async {
     Response response = await get('$url/getAll/${user.id}', headers: {
       'Content-Type': 'application/json',
-      'Authorization': user.sessionToken!
+      'Authorization': user.sessionToken ?? ''
     });
     if (response.statusCode == 401) {
       Get.snackbar('Error', 'Sin autorización.');
@@ -69,7 +70,7 @@ class UsersProvider extends GetConnect {
         '$url/login', {'email': email, 'password': password},
         headers: {'Content-Type': 'application/json'});
     if (response.body == null) {
-      Get.snackbar('Error', 'Al ejecutar la petición.');
+      Get.snackbar('Error', 'Servidor no disponible.');
       return ResponseApi();
     }
     ResponseApi responseApi = ResponseApi.fromJson(response.body);
@@ -79,10 +80,10 @@ class UsersProvider extends GetConnect {
   Future<ResponseApi> update(User user) async {
     Response response = await put('$url/update', user.toJson(), headers: {
       'Content-Type': 'application/json',
-      'Authorization': user.sessionToken!
+      'Authorization': user.sessionToken ?? ''
     });
     if (response.body == null) {
-      Get.snackbar('Error', 'Error al actualizar el perfil de usuario.');
+      Get.snackbar('Error', 'Servidor no disponible.');
       return ResponseApi();
     }
     ResponseApi responseApi = ResponseApi.fromJson(response.body);
@@ -96,10 +97,10 @@ class UsersProvider extends GetConnect {
       'notification_token': token
     }, headers: {
       'Content-Type': 'application/json',
-      'Authorization': user.sessionToken!
+      'Authorization': user.sessionToken ?? ''
     });
     if (response.body == null) {
-      Get.snackbar('Error', 'Error al actualizar el perfil de usuario.');
+      Get.snackbar('Error', 'Servidor no disponible.');
       return ResponseApi();
     }
     ResponseApi responseApi = ResponseApi.fromJson(response.body);
@@ -108,8 +109,9 @@ class UsersProvider extends GetConnect {
 
   Future<Stream> updateWithImage(User user, File image) async {
     Uri uri = Uri.parse('$url/updateWithImage');
+    // Uri uri = Uri.http(Environment.API_CHAT_OLD, '/api/users/updateWithImage');
     final request = http.MultipartRequest('PUT', uri);
-    request.headers['Authorization'] = user.sessionToken!;
+    request.headers['Authorization'] = user.sessionToken ?? '';
     request.files.add(http.MultipartFile(
         'image', http.ByteStream(image.openRead().cast()), await image.length(),
         filename: basename(image.path)));

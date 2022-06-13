@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,7 +30,7 @@ class MessagesController extends GetxController {
       PushNotificationsProvider();
   UsersProvider usersProvider = UsersProvider();
   String idChat = '';
-  List<Message> messages = <Message>[].obs; // GETX
+  List<Message> messages = <Message>[].obs;
   HomeController homeController = Get.find();
   ChatsController chatsController = Get.find();
   ImagePicker picker = ImagePicker();
@@ -42,6 +43,29 @@ class MessagesController extends GetxController {
     createChat();
     checkIfIsOnline();
   }
+  void askToDeleteMessage(Message message, BuildContext ctx) {
+    Widget cancelButton = ElevatedButton(
+        onPressed: () => Get.back(), child: const Text('Cancelar'));
+    Widget acceptButton = ElevatedButton(
+        onPressed: () async {
+          Get.back();
+          if (message.id != null) {
+            emitMessageDeleted(message);
+          } else {
+            Get.snackbar('Error', 'Mensaje inexistente.');
+          }
+        },
+        child: const Text('Eliminar'));
+    AlertDialog alertDialog = AlertDialog(
+        title: const Text('¿Desea eliminar este mensaje?'),
+        actions: [cancelButton, acceptButton]);
+    showDialog(
+        context: ctx,
+        builder: (BuildContext context) {
+          return alertDialog;
+        });
+  }
+
   void checkIfIsOnline() async {
     Response response = await usersProvider.checkIfIsOnline(userChat.id!);
     if (response.body['online'] == true) {
@@ -67,10 +91,11 @@ class MessagesController extends GetxController {
       idChat = responseApi.data as String;
       getMessages();
       listenMessage();
-      listenWriting();
+      listenMessageDeleted();
+      listenMessageReceived();
       listenMessageSeen();
       listenOffline();
-      listenMessageReceived();
+      listenWriting();
     }
   }
 
@@ -79,15 +104,18 @@ class MessagesController extends GetxController {
         .emit('message', {'id_chat': idChat, 'id_user': userChat.id});
   }
 
+  void emitMessageDeleted(Message message) {
+    homeController.socket
+        .emit('deleted', {'id_chat': idChat, 'id_message': message.id});
+  }
+
   void emitMessageSeen() {
     homeController.socket.emit('seen', {'id_chat': idChat});
   }
 
   void emitWriting() {
-    homeController.socket.emit('writing', {
-      'id_chat': idChat,
-      'id_user': myUser.id,
-    });
+    homeController.socket
+        .emit('writing', {'id_chat': idChat, 'id_user': myUser.id});
   }
 
   void getChats() async {
@@ -100,9 +128,9 @@ class MessagesController extends GetxController {
     var result = await messagesProvider.getMessagesByChat(idChat);
     messages.clear();
     messages.addAll(result);
-    for (var m in messages) {
-      if (m.status != 'VISTO' && m.idReceiver == myUser.id) {
-        await messagesProvider.updateToSeen(m.id!);
+    for (var msg in messages) {
+      if (msg.status != 'VISTO' && msg.idReceiver == myUser.id) {
+        await messagesProvider.updateToSeen(msg.id!);
         emitMessageSeen();
       }
     }
@@ -119,6 +147,13 @@ class MessagesController extends GetxController {
   void listenMessage() {
     homeController.socket.on('message/$idChat', (data) {
       getMessages();
+    });
+  }
+
+  void listenMessageDeleted() {
+    homeController.socket.on('deleted/$idChat', (data) {
+      getMessages();
+      Fluttertoast.showToast(msg: 'Se ha eliminado un mensaje.');
     });
   }
 
@@ -171,6 +206,7 @@ class MessagesController extends GetxController {
     homeController.socket.off('message/$idChat');
     homeController.socket.off('seen/$idChat');
     homeController.socket.off('writing/$idChat/${userChat.id}');
+    homeController.socket.off('deleted/$idChat');
   }
 
   Future selectImage(ImageSource imageSource, BuildContext context) async {
@@ -179,8 +215,8 @@ class MessagesController extends GetxController {
       imageFile = File(image.path);
       final dir = await path_provider.getTemporaryDirectory();
       final targetPath = "${dir.absolute.path}/temp.jpg";
-      ProgressDialog progressDialog = ProgressDialog(context: context);
-      progressDialog.show(max: 100, msg: 'Subiendo imagen...');
+      ProgressDialog dialog = ProgressDialog(context: context);
+      dialog.show(max: 100, msg: 'Subiendo imagen...');
       File? compressFile = await compressAndGetFile(imageFile!, targetPath);
       Message message = Message(
           message: '📷 Imagen',
@@ -192,7 +228,7 @@ class MessagesController extends GetxController {
       Stream stream =
           await messagesProvider.createWithImage(message, compressFile!);
       stream.listen((res) {
-        progressDialog.close();
+        dialog.close();
         ResponseApi responseApi = ResponseApi.fromJson(json.decode(res));
         if (responseApi.success == true) {
           sendNotification(
@@ -210,8 +246,8 @@ class MessagesController extends GetxController {
     final XFile? video = await picker.pickVideo(source: imageSource);
     if (video != null) {
       File videoFile = File(video.path);
-      ProgressDialog progressDialog = ProgressDialog(context: context);
-      progressDialog.show(max: 100, msg: 'Subiendo video...');
+      ProgressDialog dialog = ProgressDialog(context: context);
+      dialog.show(max: 100, msg: 'Subiendo video...');
       Message message = Message(
           message: '🎥 Video',
           idSender: myUser.id,
@@ -222,7 +258,7 @@ class MessagesController extends GetxController {
       Stream stream =
           await messagesProvider.createWithVideo(message, videoFile);
       stream.listen((res) {
-        progressDialog.close();
+        dialog.close();
         ResponseApi responseApi = ResponseApi.fromJson(json.decode(res));
         if (responseApi.success == true) {
           sendNotification(
@@ -241,7 +277,7 @@ class MessagesController extends GetxController {
       Get.snackbar('Error', 'El mensaje no puede ser vacío.');
       return;
     }
-    if (idChat == '') {
+    if (idChat.isEmpty) {
       Get.snackbar('Error', 'Al enviar el mensaje.');
       return;
     }

@@ -16,7 +16,7 @@ class MessagesProvider extends GetConnect {
   Future<ResponseApi> create(Message message) async {
     Response response = await post('$url/create', message.toJson(), headers: {
       'Content-Type': 'application/json',
-      'Authorization': user.sessionToken!
+      'Authorization': user.sessionToken ?? ''
     });
     if (response.body == null) {
       Get.snackbar('Error', 'Al actualizar el usuario.');
@@ -29,7 +29,7 @@ class MessagesProvider extends GetConnect {
   Future<Stream> createWithImage(Message message, File image) async {
     Uri uri = Uri.parse('$url/createWithImage');
     final request = http.MultipartRequest('POST', uri);
-    request.headers['Authorization'] = user.sessionToken!;
+    request.headers['Authorization'] = user.sessionToken ?? '';
     request.files.add(http.MultipartFile(
         'image', http.ByteStream(image.openRead().cast()), await image.length(),
         filename: basename(image.path)));
@@ -41,7 +41,7 @@ class MessagesProvider extends GetConnect {
   Future<Stream> createWithVideo(Message message, File video) async {
     Uri uri = Uri.parse('$url/createWithVideo');
     final request = http.MultipartRequest('POST', uri);
-    request.headers['Authorization'] = user.sessionToken!;
+    request.headers['Authorization'] = user.sessionToken ?? '';
     request.files.add(http.MultipartFile(
         'video', http.ByteStream(video.openRead().cast()), await video.length(),
         filename: basename(video.path)));
@@ -50,44 +50,56 @@ class MessagesProvider extends GetConnect {
     return response.stream.transform(utf8.decoder);
   }
 
-  Future<List<Message>> getMessagesByChat(String idChat) async {
-    Response response = await get('$url/findByChat/$idChat', headers: {
+  // Future<ResponseApi> deleteMessage(String idMessage) async {
+  //   Response response = await delete('$url/deleteMessage/$idMessage', headers: {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': user.sessionToken ?? ''
+  //   });
+  //   if (response.body == null) {
+  //     Get.snackbar('Error', 'Servidor no disponible.');
+  //     return ResponseApi();
+  //   }
+  //   ResponseApi responseApi = ResponseApi.fromJson(response.body);
+  //   return responseApi;
+  // }
+
+  Future<List<Message>> getMessagesByChat(String idMessage) async {
+    Response response = await get('$url/findByChat/$idMessage', headers: {
       'Content-Type': 'application/json',
-      'Authorization': user.sessionToken!
+      'Authorization': user.sessionToken ?? ''
     });
     if (response.statusCode == 401) {
-      Get.snackbar('Peticion denegada',
-          'tu usuario no tiene permitido obtener esta informacion');
+      Get.snackbar('Error', 'Sin autorización.');
       return [];
     }
     List<Message> messages = Message.fromJsonList(response.body);
     return messages;
   }
 
-  Future<ResponseApi> updateToReceived(String idMessage) async {
-    Response response = await put('$url/updateToReceived', {
-      'id': idMessage
-    }, headers: {
-      'Content-Type': 'application/json',
-      'Authorization': user.sessionToken!
-    });
-    if (response.body == null) {
-      Get.snackbar('Error', 'No se pudo actualizar el usuario');
-      return ResponseApi();
-    }
-    ResponseApi responseApi = ResponseApi.fromJson(response.body);
-    return responseApi;
-  }
+  // Future<ResponseApi> updateToReceived(String idMessage) async {
+  //   Response response = await put('$url/updateToReceived', {
+  //     'id': idMessage
+  //   }, headers: {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': user.sessionToken ?? ''
+  //   });
+  //   if (response.body == null) {
+  //     Get.snackbar('Error', 'Servidor no disponible.');
+  //     return ResponseApi();
+  //   }
+  //   ResponseApi responseApi = ResponseApi.fromJson(response.body);
+  //   return responseApi;
+  // }
 
   Future<ResponseApi> updateToSeen(String idMessage) async {
     Response response = await put('$url/updateToSeen', {
       'id': idMessage
     }, headers: {
       'Content-Type': 'application/json',
-      'Authorization': user.sessionToken!
+      'Authorization': user.sessionToken ?? ''
     });
     if (response.body == null) {
-      Get.snackbar('Error', 'No se pudo actualizar el usuario');
+      Get.snackbar('Error', 'Servidor no disponible.');
       return ResponseApi();
     }
     ResponseApi responseApi = ResponseApi.fromJson(response.body);

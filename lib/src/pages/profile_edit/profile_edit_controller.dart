@@ -49,9 +49,8 @@ class ProfileEditController extends GetxController {
         },
         child: const Text('Cámara'));
     AlertDialog alertDialog = AlertDialog(
-      title: const Text('Selecciona una imagen'),
-      actions: [galleryButton, cameraButton],
-    );
+        title: const Text('Selecciona una imagen'),
+        actions: [galleryButton, cameraButton]);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -71,7 +70,7 @@ class ProfileEditController extends GetxController {
         email: user.email,
         sessionToken: user.sessionToken,
         image: user.image,
-        updatedAt: DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
+        updatedAt: DateFormat('dd-MM-yyyy hh:mm:ss').format(DateTime.now()),
         createdAt: user.createdAt);
     ProgressDialog progressDialog = ProgressDialog(context: context);
     progressDialog.show(max: 100, msg: 'Actualizando perfil de usuario...');

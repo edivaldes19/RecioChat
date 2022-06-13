@@ -3,7 +3,8 @@ import 'package:recio_chat/src/utils/my_colors.dart';
 
 class BubbleImage extends StatelessWidget {
   final String message, time, url, status;
-  final delivered, isMe, isImage;
+  final delivered, isMe;
+  final bool isImage;
   const BubbleImage(
       {Key? key,
       this.message = '',

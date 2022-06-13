@@ -8,6 +8,7 @@ import 'package:recio_chat/src/widgets/no_data_widget.dart';
 
 class UsersPage extends StatelessWidget {
   UsersController con = Get.put(UsersController());
+  UsersPage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +29,11 @@ class UsersPage extends StatelessWidget {
                           });
                     } else {
                       return NoDataWidget(
-                          text: 'Actualmente eres el único usuario.');
+                          warning: 'Actualmente eres el único usuario.');
                     }
                   } else {
                     return NoDataWidget(
-                        text: 'Actualmente eres el único usuario.');
+                        warning: 'Actualmente eres el único usuario.');
                   }
                 })));
   }

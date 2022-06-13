@@ -8,7 +8,7 @@ class DefaultFirebaseConfig {
     if (kIsWeb) {
       return const FirebaseOptions(
           apiKey: 'AIzaSyBbhBsTROm4b_Lx91homqlgf3qaBtS849Y',
-          authDomain: '',
+          authDomain: 'reciochat.appspot.com',
           databaseURL: '',
           projectId: 'reciochat',
           storageBucket: 'reciochat.appspot.com',
@@ -21,7 +21,7 @@ class DefaultFirebaseConfig {
           appId: '1:418560497563:android:70b44e0a83a63db588b33e',
           messagingSenderId: '418560497563',
           projectId: 'reciochat',
-          authDomain: '',
+          authDomain: 'reciochat.appspot.com',
           iosBundleId: '',
           iosClientId: '',
           databaseURL: '');

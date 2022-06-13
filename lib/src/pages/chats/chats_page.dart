@@ -18,15 +18,16 @@ class ChatsPage extends StatelessWidget {
             automaticallyImplyLeading: false,
             backgroundColor: MyColors.primaryColor),
         body: Obx(() => SafeArea(
-            child: getChats().isNotEmpty
-                ? ListView(children: getChats())
+            child: getChats(context).isNotEmpty
+                ? ListView(children: getChats(context))
                 : NoDataWidget(
-                    text:
+                    warning:
                         'No tienes ningún Chat, dirígete a Usuarios e inicia una conversación.'))));
   }
 
-  Widget cardChat(Chat chat) {
+  Widget cardChat(Chat chat, BuildContext ctx) {
     return ListTile(
+        onLongPress: () => con.askToDeleteChat(chat, ctx),
         onTap: () => con.goToChat(chat),
         title: Text(
             chat.idUser1 == con.myUser.id
@@ -60,9 +61,9 @@ class ChatsPage extends StatelessWidget {
                         : chat.imageUser1 ?? Environment.IMAGE_URL))));
   }
 
-  List<Widget> getChats() {
+  List<Widget> getChats(BuildContext ctx) {
     return con.chats.map((chat) {
-      return Container(child: cardChat(chat));
+      return Container(child: cardChat(chat, ctx));
     }).toList();
   }
 }

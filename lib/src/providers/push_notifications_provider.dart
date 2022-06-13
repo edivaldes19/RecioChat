@@ -10,8 +10,8 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 class PushNotificationsProvider extends GetConnect {
   AndroidNotificationChannel channel = const AndroidNotificationChannel(
-    'high_importance_channel', // id
-    'High Importance Notifications', // title
+    'high_importance_channel',
+    'High Importance Notifications',
     importance: Importance.high,
   );
   FlutterLocalNotificationsPlugin plugin = FlutterLocalNotificationsPlugin();
@@ -28,9 +28,7 @@ class PushNotificationsProvider extends GetConnect {
   void onMessageListener() async {
     FirebaseMessaging.instance
         .getInitialMessage()
-        .then((RemoteMessage? message) {
-      if (message != null) {}
-    });
+        .then((RemoteMessage? message) {});
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       showNotification(message);
     });
@@ -54,7 +52,7 @@ class PushNotificationsProvider extends GetConnect {
     }, headers: {
       'Content-type': 'application/json',
       'Authorization':
-          'key=AAAAaJGwl2Q:APA91bGmFuT0QFcJd6e7Evg6iaoXWrX1XrgeN3vPRIN535BfxQfR33t1AkFtnYqHyqYbQXL1ANAdRaU3TkuO_C3wJHAcaqUdpU_lsIRZxehcuHQvdVTIk_YNUYNLYUbWfebyMDI0ezXO'
+          'key=AAAAYXQmV5s:APA91bHFJ6NODsYOTpJ5drNy0m_pi7p_x-0zW-2mubFhoeLBDKvbdLskGwg8fuC5akNFabmmKsO8SoR5LgZS_GQVm0W9oC6WDzySPIIekVjUjS37Zac4fWvU_PpVyDY_lKZ411Bvb0AH'
     });
     return response;
   }
@@ -64,7 +62,7 @@ class PushNotificationsProvider extends GetConnect {
     if (message.data['url'] == '') {
       androidPlatformChannelSpecifics = AndroidNotificationDetails(
           channel.id, channel.name,
-          icon: 'launch_background');
+          icon: 'ic_launcher');
     } else {
       ByteArrayAndroidBitmap bigPicture = ByteArrayAndroidBitmap(
           await _getByteArrayFromUrl(message.data['url']));
@@ -76,7 +74,7 @@ class PushNotificationsProvider extends GetConnect {
           htmlFormatSummaryText: true);
       androidPlatformChannelSpecifics = AndroidNotificationDetails(
           channel.id, channel.name,
-          icon: 'launch_background', styleInformation: information);
+          icon: 'ic_launcher', styleInformation: information);
     }
     plugin.show(
         int.parse(message.data['id_chat']),
@@ -90,7 +88,7 @@ class PushNotificationsProvider extends GetConnect {
     socket.connect();
     socket.emit('received', {
       'id_chat': message.data['id_chat'],
-      'id_message': message.data['id_message'],
+      'id_message': message.data['id_message']
     });
   }
 

@@ -18,11 +18,7 @@ class ProfileController extends GetxController {
     Widget cancelButton = ElevatedButton(
         onPressed: () => Get.back(), child: const Text('Cancelar'));
     Widget acceptButton = ElevatedButton(
-        onPressed: () {
-          Get.back();
-          signOut();
-        },
-        child: const Text('Cerrar sesión'));
+        onPressed: () => signOut(), child: const Text('Cerrar sesión'));
     AlertDialog alertDialog = AlertDialog(
         title: const Text('¿Está seguro de realizar está acción?'),
         actions: [cancelButton, acceptButton]);

@@ -10,10 +10,10 @@ import 'package:recio_chat/src/pages/messages/messages_page.dart';
 import 'package:recio_chat/src/pages/profile_edit/profile_edit_page.dart';
 import 'package:recio_chat/src/pages/register/register_page.dart';
 import 'package:recio_chat/src/pages/user_info/user_info_page.dart';
-import 'package:recio_chat/src/view_user_image/view_image_page.dart';
 import 'package:recio_chat/src/providers/push_notifications_provider.dart';
 import 'package:recio_chat/src/utils/default_firebase_config.dart';
 import 'package:recio_chat/src/utils/my_colors.dart';
+import 'package:recio_chat/src/view_user_image/view_image_page.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import 'src/api/environment.dart';
